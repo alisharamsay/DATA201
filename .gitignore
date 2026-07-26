@@ -4,4 +4,4 @@
 .Ruserdata
 
 # Prevent large local Inside Airbnb dataset (week 4) from uploading to GitHub
-listing.csv
+listings.csv
