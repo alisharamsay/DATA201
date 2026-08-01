@@ -67,3 +67,27 @@ all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26
 ```
 
 
+Summary stats
+```{r}
+all_chch %>%
+  select(-id, -host_id, -latitude, -longitude) %>%
+  summarise(across(where(is.numeric),
+                    list(min = ~min(.x, na.rm = TRUE),
+                         max = ~max(.x, na.rm = TRUE),
+                         mean = ~mean(.x, na.rm = TRUE),
+                         sd = ~sd(.x, na.rm = TRUE))))
+```
+
+```{r}
+table(all_chch$room_type)
+table(all_chch$neighbourhood)
+```
+
+```{r}
+colSums(is.na(all_chch))
+```
+
+Storing the combined Christchurch dataset
+```{r}
+write_csv(all_chch, 'week_5_datasets/all_chch_listings.csv')
+```
