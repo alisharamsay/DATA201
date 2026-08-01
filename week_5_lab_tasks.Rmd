@@ -9,8 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Task: Filter on Christchurch data only. Use only this filtered dataset from now on.
-Using 'june_2026_listings.csv' first
+Task: Filter on Christchurch data only. Use only this filtered dataset from now on. Using 'june_2026_listings.csv' first
 
 ```{r june_2026_listings}
 
@@ -23,17 +22,72 @@ print(head(jun_26, 10))
 print("Summary of the dataset is:")
 print(summary(jun_26))
 ```
+
 ```{r}
 # Check neighbourhood_group column has Christchurch city - list all unique cities in that column
 unique(jun_26$neighbourhood_group)
 ```
+
 ```{r}
-
-# Filter out so data only has Christchurch city rows
+# Filter out so data only has Christchurch city rows and adding the month+year column
 chch_listings <- jun_26 %>%
-  filter(neighbourhood_group == 'Christchurch City')
-
+  filter(neighbourhood_group == 'Christchurch City') %>%
+  mutate(month_year = '2026-06')
 head(chch_listings)
 ```
 
 The filtered on Christchurch city data is named: chch_listings
+
+Filtering all the data sets to Christchurch city and adding month + year column using a pipeline
+```{r}
+load_chch_listings <- function(filename, month_year) {
+  read_csv(paste0('week_5_datasets/', filename)) %>%
+    filter(neighbourhood_group == 'Christchurch City') %>%
+    mutate(month_year = month_year)
+}
+```
+
+Running the pipeline for the data
+```{r}
+chch_oct25 <- load_chch_listings('october_2025_listings.csv', '2025-10')
+chch_nov25 <- load_chch_listings('november_2025_listings.csv', '2025-11')
+chch_dec25 <- load_chch_listings('december_2025_listings.csv', '2025-12')
+chch_jan26 <- load_chch_listings('january_2026_listings.csv', '2026-01')
+chch_feb26 <- load_chch_listings('february_2026_listings.csv', '2026-02')
+chch_mar26 <- load_chch_listings('march_2026_listings.csv', '2026-03')
+chch_apr26 <- load_chch_listings('april_2026_listings.csv', '2026-04')
+chch_may26 <- load_chch_listings('may_2026_listings.csv', '2026-05')
+chch_jun26 <- load_chch_listings('june_2026_listings.csv', '2026-06')
+```
+
+combining datasets into full data set for Oct 2025 to June 2026 for Christchurch
+```{r}
+all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26, chch_mar26, chch_apr26, chch_may26, chch_jun26)
+
+```
+
+
+Summary stats
+```{r}
+all_chch %>%
+  select(-id, -host_id, -latitude, -longitude) %>%
+  summarise(across(where(is.numeric),
+                    list(min = ~min(.x, na.rm = TRUE),
+                         max = ~max(.x, na.rm = TRUE),
+                         mean = ~mean(.x, na.rm = TRUE),
+                         sd = ~sd(.x, na.rm = TRUE))))
+```
+
+```{r}
+table(all_chch$room_type)
+table(all_chch$neighbourhood)
+```
+
+```{r}
+colSums(is.na(all_chch))
+```
+
+Storing the combined Christchurch dataset
+```{r}
+write_csv(all_chch, 'week_5_datasets/all_chch_listings.csv')
+```
