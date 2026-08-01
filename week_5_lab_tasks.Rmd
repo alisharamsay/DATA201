@@ -1,0 +1,39 @@
+---
+title: "Week_5_lab"
+author: "CHAKAR"
+date: "2026-07-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Task: Filter on Christchurch data only. Use only this filtered dataset from now on.
+Using 'june_2026_listings.csv' first
+
+```{r june_2026_listings}
+
+library(tidyverse)
+jun_26 <- read_csv('week_5_datasets/june_2026_listings.csv')
+
+print("The first 10 rows are:")
+print(head(jun_26, 10))
+
+print("Summary of the dataset is:")
+print(summary(jun_26))
+```
+```{r}
+# Check neighbourhood_group column has Christchurch city - list all unique cities in that column
+unique(jun_26$neighbourhood_group)
+```
+```{r}
+
+# Filter out so data only has Christchurch city rows
+chch_listings <- jun_26 %>%
+  filter(neighbourhood_group == 'Christchurch City')
+
+head(chch_listings)
+```
+
+The filtered on Christchurch city data is named: chch_listings
