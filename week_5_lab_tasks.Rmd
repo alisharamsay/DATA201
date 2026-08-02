@@ -168,7 +168,7 @@ head(chch_file$last_review)
 
 publish_date <- as.Date("2026-06-19")
 chch_file$difference_days <- as.numeric(publish_date - chch_file$last_review) # create a new column "difference_days"
-difference_days
+chch_file$difference_days
 
 head(chch_file) # Check the new column difference_days exists
 ```
