@@ -1,10 +1,18 @@
 # DATA201
 
-# Week 4
+# Week 4 and 5 labs
+## Airbnb Dataset Analysis
+This repository contains Airbnb data that has been renamed and transformed for this project.
 
-# Source: Airbnb listings.csv
+## Data Attribution: 
+The data used in this project is sourced from [Inside Airbnb] https://insideairbnb.com/get-the-data/
 
-# The followings describes the listings.csv columns
+**Original Source** Inside Airbnb (https://insideairbnb.com/get-the-data/)
+**License** This data is licensed under a [Creative Commons Attribution 4.0 International License (CCBY 4.0)](https://creativecommons.org)
+**Modifications** The original CSV dataset files were downloaded to "Week_5_datasets" folder and filenames were changed to fit the project.
+
+## The followings describes the listings.csv columns
+
 # id (integer): Airbnb's unique identifier for the listing
 # name (string) : name of the listing
 # host_id(integer) : Airbnb's unique identifier for the host/user
@@ -21,4 +29,4 @@
 # calculated_hostings_count (integer) :The number of listings the host has in the current scrape
 # availability/365 (integer) : number of days listings available in 365 days
 # number_of_reviews_ltm (integer) : y	The number of reviews the listing has (in the last 12 months) 
-# license (string) : 
+# license (string) : The licence/permit/registration number
