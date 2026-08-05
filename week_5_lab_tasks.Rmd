@@ -170,9 +170,9 @@ head(chch_file$last_review)
 
 ```{r review days}
 
-# Using last publish date on airbnb listings website, which is 19 Jun 2026
+# Using last publish date on airbnb listings website, which is 22 Jun 2026
 
-publish_date <- as.Date("2026-06-19")
+publish_date <- as.Date("2026-06-22")
 chch_file$difference_days <- as.numeric(publish_date - chch_file$last_review) # create a new column "difference_days"
 chch_file$difference_days
 
