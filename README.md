@@ -74,12 +74,9 @@ over time.
   
 ### Preprocessing, cleaning and labelling
 - Each monthly file was filtered to the "Christchurch City" neighbourhood_group
-- A derived column, month_year, was added to each monthly file to record 
+- A new column, month_year, was added to each monthly file to record 
   which snapshot it came from (e.g. "2025-10").
 - The 9 filtered files were concatenated into all_chch.
-- No values were imputed; missing data was left as NA.
-- No manual labelling was performed - all columns are as provided, aside 
-  from month_year.
 
 ### Uses
 - Intended for this DATA201 coursework project, exploring trends in 
