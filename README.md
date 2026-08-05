@@ -35,7 +35,6 @@ minimum_nights (integer): minimum number of night stay for the listing
 number_of_reviews (integer): The number of reviews the listing has
 last_review (date): The date of the last/newest review
 reviews_per_month (numeric): The average number of reviews per month the listing has over the lifetime of the listing.
-
 calculated_host_listings_count (integer): The number of listings the host has in the current scrape
 availability_365 (integer): number of days listings available in 365 days
 number_of_reviews_ltm (integer): The number of reviews the listing has (in the last 12 months) 
@@ -63,12 +62,7 @@ in Christchurch Airbnb listings over time.
 - The combined dataset (all_chch) contains 28796 rows across 9 monthly 
   snapshots.
 - 19 columns, described in the data dictionary above.
-- Missing data: license has the most missing values (28,795), as 
-  registration numbers aren't required or provided for all listings. 
-  price is missing for 10,667 rows. last_review and reviews_per_month 
-  are each missing 2,627 values (listings with no reviews yet). 
-  minimum_nights has 37 missing values, and host_name has 1. All other 
-  columns have no missing values.
+- There are 2,8795 in the data
 - No sensitive personal data beyond host first name and neighbourhood-level 
   location (not exact address).
 - Represents Airbnb hosts and listings in Christchurch City only; excludes 
