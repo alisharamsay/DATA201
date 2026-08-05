@@ -81,6 +81,9 @@ all_chch %>%
 ```
 
 ```{r}
+nrow(all_chch)
+```
+```{r}
 # frequency table counting how many times unique category appears in room_type coumn and neighbourhood column
 
 table(all_chch$room_type)
@@ -181,3 +184,22 @@ hist(chch_file$difference_days,
 ```
 
 Task - Find out which properties in New Zealand get the highest numbers of reviews (filter top 10%). How many of them are in Christchurch?
+
+```{r}
+chch_file$number_of_reviews
+```
+```{r}
+filtered_data <- sort(chch_file$number_of_reviews, decreasing =TRUE) 
+print(filtered_data)
+```
+```{r}
+nrow(chch_file)
+```
+```{r}
+top_prc <- 28795*0.1
+print(top_prc)
+```
+
+```{r}
+head(filtered_data, n=2880)
+```
