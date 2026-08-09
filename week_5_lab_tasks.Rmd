@@ -10,6 +10,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 Task: Filter on Christchurch data only. Use only this filtered dataset from now on. Using 'june_2026_listings.csv' first
 
 ```{r june_2026_listings}
@@ -33,6 +34,8 @@ print(summary(jun_26))
 unique(jun_26$neighbourhood_group)
 ```
 
+Checking process by filtering june before full chch data
+
 ```{r}
 # Checking the filter works just for june
 # Filter out so data only has Christchurch city rows and adding the month+year column
@@ -43,6 +46,7 @@ unique(jun_26$neighbourhood_group)
 ```
 
 Filtering all the data sets to Christchurch city and adding month + year column using a pipeline
+
 ```{r}
 # Takes a filename and its corresponding month_year label, applies the Christchurch City filter, and adds the month_year column.
 load_chch_listings <- function(filename, month_year) {
@@ -53,6 +57,7 @@ load_chch_listings <- function(filename, month_year) {
 ```
 
 Applying the load_chch_listings function to each month's dataset, filtering to Christchurch City and tagging each with its month_year.
+
 ```{r}
 chch_oct25 <- load_chch_listings('october_2025_listings.csv', '2025-10')
 chch_nov25 <- load_chch_listings('november_2025_listings.csv', '2025-11')
@@ -66,15 +71,17 @@ chch_jun26 <- load_chch_listings('june_2026_listings.csv', '2026-06')
 ```
 
 Combining all nine monthly datasets into a single Christchurch dataset spanning October 2025 to June 2026.
+
 ```{r}
 # Row bind all monthly Christchurch datasets into one combined dataset
 all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26, chch_mar26, chch_apr26, chch_may26, chch_jun26)
 
 ```
+
 Combined dataset called: all_chch
 
-
 Summary stats
+
 ```{r}
 # Summary statistics (min, max, mean, sd) for all numeric columns,
 all_chch %>%
@@ -105,6 +112,7 @@ colSums(is.na(all_chch))
 ```
 
 Storing the combined Christchurch dataset named: all_chch_listings.csv
+
 ```{r}
 # Storing data
 write_csv(all_chch, 'week_5_datasets/all_chch_listings.csv')
@@ -144,6 +152,7 @@ table(price_bins)
 outliers <- chch_file %>%
   filter(price >20000)
 View(outliers)
+# shows 9 outliers
 ```
 
 To check the accommodation priced at \$22971/night. Checking its latitude (-43.52059) and longitude(172.6496) showed on google map to be at address 333 Bealey Avenue, chch central. Checked accommodation on google map priced at \$43188/night and \$43178/night, also appeared unlikely to worth that much. These 9 values likely error, to drop these 9 extreme outlier values
@@ -212,6 +221,7 @@ print(sorted_data)
 ```
 
 Finding the number of rows in the dataset and finding 10% (0.1) of the data
+
 ```{r}
 #finding num of rows
 n_total <- nrow(chch_file)
@@ -222,7 +232,9 @@ top_prc <- n_total * 0.1
 #printing top percentage
 print(top_prc)
 ```
+
 Showing top 10% of the data
+
 ```{r}
-head(filtered_data, n=2880)
+head(filtered_data, n=top_prc)
 ```
