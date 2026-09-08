@@ -21,19 +21,29 @@ data <- read_csv("week_8_datasets/all_chch_listings.csv")
 
 # summary statistics for all columns
 print(summary(data))
+```
+data has: Rows: 28795 Columns: 19
 
+```{r}
 # datatype
 print(glimpse(data))
+```
 
+```{r}
 # number of missing NA values
 print(colSums(is.na(data)))
+```
 
+```{r}
 # plot price distribution
 ggplot(data, aes(x = price)) +
   geom_histogram(bins = 50, fill = "steelblue", color = "white") +
   theme_minimal() +
   labs(title = "Distribution of Rental Prices", x = "Price", y = "Count")
+```
 
+Instruction from week 5 lab - so probably need days_since_review column - added that column in
+```{r}
 # days since last reivew (calculate the time difference between scrape/publish date) then plot it
 data <- data %>%
   mutate(
@@ -51,7 +61,7 @@ ggplot(data, aes(x = days_since_review)) +
 # find number of negative days
 negative_rows <- data %>% 
   filter(days_since_review < 0)
-print(negative_rows)
+negative_rows
 ```
 Summary statistics: 
 price: median price is $205, but the max is $43,654 (a massive extreme outlier? error?).
@@ -64,7 +74,7 @@ price has 10,667 missing values: how to handle? or filter them out?
 
 last_review and reviews_per_month both have 2,627 missing values
 
-days_since_review has negative values. Days since last reivew histogram: Most reviews happened very recently (clumped near 0 days), which makes sense for active listings, but there are long-tail stale listings stretching out past 1,000+ days.
+days_since_review has 9418 negative values. Days since last reivew histogram: Most reviews happened very recently (clumped near 0 days), which makes sense for active listings, but there are long-tail stale listings stretching out past 1,000+ days.
 For month_year column, change values to include the day the scrape date was done (from the website).
 ```{r}
 data_1 <- data %>%
@@ -344,16 +354,23 @@ glimpse(df_cleaned)
 nrow(df_cleaned)
 ```
 Summary:
-Outlier Removal: Established a $5,000 price ceiling to eliminate extreme pricing anomalies and placeholder errors.
+1.price column
+- Initially 10667 missing values, with 100% missing in 2025-12, 2026-01, 2026-02 months.
+- Imputed price for listings that had the same price history across all other months (509 prices were filled).
+- (Outlier Removal) Removed price column top 15 rows, priced >5000 as they are very likely errors. Total number of rows in price column before cleaning: 28795, after cleaning: 28780.
+- Question: what to do with the remaining 10158 missing values in price column? The column is still right_skewed.
 
-Review Data Standardization: Converted NA values in reviews_per_month to 0 for unreviewed listings, confirming mathematical equivalence with review count columns.
+2. week 5 instructed a days_since_review column. So that column added in. Initially scrape_date column used YYYY-MM-01 but had 9418 Negative values in the days_since_review column. So scrape_date column added the scrap "day" got from the website, and recalculated days_since_review column.
+Question: still has 1745 negative days (reviews likely posted in the days a). Do we need this column and what to do with this negative days?
 
-Missing Value Imputation: Imputed missing values in minimum_nights using the dataset median to preserve sample size.
+3. Removed license column (100% NAs)
+4. Removed neighbourhood_group because it only had "Christchurch_city" value so can't used to compare with anything.
+5. Removed host_name: has personal identifiable information, and appeared irrelevant to analysis.
+6. Removed last_review_date, because both last_review and last_review_date have exactly same values.
 
-Structural Gap Preservation: Retained NA values in the price column to maintain accurate property counts for availability metrics while isolating calculations from price analysis.
+7. turned 2619 missing values (NA) in the reviews_per_month column and turned it into numerical 0. Because if property has 0 reviews, both reviews_per_month and last_review columns have missing values (NA). (Every listing either has a positive review >0 count, or is missing (NA)). Question - But left last_review NAs as NAs for now since 0 can mean something in that column.
 
-Zero-Variance Elimination: Removed non-contributory columns (such as neighbourhood_group) exhibiting uniform single-value distribution.
+8.minimum_nights column has 37 NAs. 
+Question - impute it with median (min-1, max-365, median-1, mean - 1.788)? or leave it as NAs
 
-Privacy and Hygiene Pruning: Deleted personally identifiable information (host_name), unstructured text (name), and redundant date fields (last_review_date).
 
-Longitudinal Structure Verification: Identified and preserved multi-month time-series entries (month_year) to support temporal trend analysis rather than treating them as erroneous duplicates.
