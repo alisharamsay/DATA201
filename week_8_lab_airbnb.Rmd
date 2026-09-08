@@ -45,12 +45,14 @@ ggplot(data, aes(x = price)) +
 Instruction from week 5 lab - so probably need days_since_review column - added that column in
 ```{r}
 # days since last reivew (calculate the time difference between scrape/publish date) then plot it
+# added scrape_date, days_since_review
 data <- data %>%
   mutate(
-    scrape_date = ymd(paste0(month_year, "-01")), # Converts "YYYY-MM" to date # scrap date set to 1st of each month
-    last_review_date = ymd(last_review),
-    days_since_review = as.numeric(scrape_date - last_review_date)
+    scrape_date = ymd(paste0(month_year, "-01")), # Sets scrape date to the 1st of each month
+    last_review = ymd(last_review),              # Converts the original text column directly into a Date
+    days_since_review = as.numeric(scrape_date - last_review)
   )
+
 head(data)
 
 ggplot(data, aes(x = days_since_review)) +
@@ -58,7 +60,7 @@ ggplot(data, aes(x = days_since_review)) +
   theme_minimal() +
   labs(title = "Days Since Last Review", x = "Days", y = "Count")
 
-# find number of negative days
+# Find number of negative days
 negative_rows <- data %>% 
   filter(days_since_review < 0)
 negative_rows
@@ -78,9 +80,10 @@ days_since_review has 9418 negative values. Days since last reivew histogram: Mo
 For month_year column, change values to include the day the scrape date was done (from the website).
 ```{r}
 data_1 <- data %>%
-  mutate( # create/modify existing columns
+  mutate( 
+    # Assign the exact scrape date based on the month
     scrape_date = case_when(
-      month_year == "2025-10" ~ ymd("2025-10-05"), #f month_year is "2025-10", the code assigns the scrape date October 5, 2025, ymd() converts the text "2025-10-05" into an R date
+      month_year == "2025-10" ~ ymd("2025-10-05"),
       month_year == "2025-11" ~ ymd("2025-11-07"),
       month_year == "2025-12" ~ ymd("2025-12-11"),
       month_year == "2026-01" ~ ymd("2026-01-16"),
@@ -89,14 +92,16 @@ data_1 <- data %>%
       month_year == "2026-04" ~ ymd("2026-04-16"),
       month_year == "2026-05" ~ ymd("2026-05-23"),
       month_year == "2026-06" ~ ymd("2026-06-19"),
-      TRUE ~ NA_Date_ # if months isn't one of the months listed, leave the scrape date blank
+      TRUE ~ NA_Date_
     ),
-    last_review_date = ymd(last_review),
-    days_since_review = as.numeric(scrape_date - last_review_date)
+    # Convert last_review into a proper Date type directly (no extra column needed!)
+    last_review = ymd(last_review),
+    # Calculate days since review using the updated last_review column
+    days_since_review = as.numeric(scrape_date - last_review)
   )
 
-# Check how many rows in days_since_review still has negative values
-negative_rows <- data_1 %>% 
+# Check how many rows in days_since_review still have negative values
+negative_rows <- data_1 %>%  
   filter(days_since_review < 0)
 print(negative_rows)
 ```
@@ -311,11 +316,10 @@ identical(df_cleaned$last_review, df_cleaned$last_review_date)
 DECISIONS:
 Drop: 
 host_name : irrelevant to analysis, and is personal identifiable information
-Drop last_review_date: Both last_review and last_Review_Date are the same
 
 ```{r}
 df_cleaned <- df_cleaned %>%
-  select(-c(host_name, last_review_date))
+  select(-c(host_name))
 colnames(df_cleaned)
 ```
 ```{r}
@@ -354,23 +358,36 @@ glimpse(df_cleaned)
 nrow(df_cleaned)
 ```
 Summary:
-1.price column
-- Initially 10667 missing values, with 100% missing in 2025-12, 2026-01, 2026-02 months.
-- Imputed price for listings that had the same price history across all other months (509 prices were filled).
-- (Outlier Removal) Removed price column top 15 rows, priced >5000 as they are very likely errors. Total number of rows in price column before cleaning: 28795, after cleaning: 28780.
-- Question: what to do with the remaining 10158 missing values in price column? The column is still right_skewed.
+1. price column
+Initially had 10,667 missing values, with 100% missing values for the 3 months: Dec 2025–Feb 2026.
+Imputed 509 prices where the listing had the same price across all other months.
+Removed 15 extreme outliers with prices > $5,000, which were likely errors.
+Before: 28,795 rows
+After: 28,780 rows
+Question: What should we do with the remaining 10,158 missing values? The price column is still right-skewed.
 
-2. week 5 instructed a days_since_review column. So that column added in. Initially scrape_date column used YYYY-MM-01 but had 9418 Negative values in the days_since_review column. So scrape_date column added the scrap "day" got from the website, and recalculated days_since_review column.
-Question: still has 1745 negative days (reviews likely posted in the days a). Do we need this column and what to do with this negative days?
+2. days_since_review column
+Added days_since_review as instructed in Week 5.
+Initially, scrape_date was set to the first day of each month (YYYY-MM-01), resulting in 9,418 negative values.
+Updated scrape_date to use the actual day the listing was scraped and recalculated days_since_review.
+There are now 1,745 negative values, likely because some reviews were posted after the scrape date.
+Question: Do we need this column? If so, how should we handle the negative values?
 
-3. Removed license column (100% NAs)
-4. Removed neighbourhood_group because it only had "Christchurch_city" value so can't used to compare with anything.
-5. Removed host_name: has personal identifiable information, and appeared irrelevant to analysis.
-6. Removed last_review_date, because both last_review and last_review_date have exactly same values.
+3. Removed columns
+license – removed because it was 100% missing.
+neighbourhood_group – removed because all values were Christchurch_city, so it provides no useful comparison.
+host_name – removed because it contains personally identifiable information and is not relevant to the analysis.
 
-7. turned 2619 missing values (NA) in the reviews_per_month column and turned it into numerical 0. Because if property has 0 reviews, both reviews_per_month and last_review columns have missing values (NA). (Every listing either has a positive review >0 count, or is missing (NA)). Question - But left last_review NAs as NAs for now since 0 can mean something in that column.
+4. reviews_per_month and last_review
+Converted 2,619 missing values in reviews_per_month to 0, since listings with no reviews have both reviews_per_month and last_review recorded as NA.
+Left last_review NAs unchanged for now, since replacing them with 0 would not make sense for a date variable.
+Question: Is this the appropriate way to handle these missing values?
 
-8.minimum_nights column has 37 NAs. 
-Question - impute it with median (min-1, max-365, median-1, mean - 1.788)? or leave it as NAs
+5. minimum_nights
+Has 37 missing values.
+Current statistics: min = 1, median = 1, mean = 1.788, max = 365.
+Question: Should we impute the missing values using the median (1), or leave them as NA?
+
+(Note: Cleaned dataset: df_cleaned)
 
 
