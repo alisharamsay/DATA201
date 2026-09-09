@@ -39,6 +39,7 @@ head(chch_listings)
 The filtered on Christchurch city data is named: chch_listings
 
 Filtering all the data sets to Christchurch city and adding month + year column using a pipeline
+
 ```{r}
 load_chch_listings <- function(filename, month_year) {
   read_csv(paste0('week_5_datasets/', filename)) %>%
@@ -48,6 +49,7 @@ load_chch_listings <- function(filename, month_year) {
 ```
 
 Running the pipeline for the data
+
 ```{r}
 chch_oct25 <- load_chch_listings('october_2025_listings.csv', '2025-10')
 chch_nov25 <- load_chch_listings('november_2025_listings.csv', '2025-11')
@@ -61,13 +63,14 @@ chch_jun26 <- load_chch_listings('june_2026_listings.csv', '2026-06')
 ```
 
 combining datasets into full data set for Oct 2025 to June 2026 for Christchurch
+
 ```{r}
 all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26, chch_mar26, chch_apr26, chch_may26, chch_jun26)
 
 ```
 
-
 Summary stats
+
 ```{r}
 all_chch %>%
   select(-id, -host_id, -latitude, -longitude) %>%
@@ -88,6 +91,7 @@ colSums(is.na(all_chch))
 ```
 
 Storing the combined Christchurch dataset
+
 ```{r}
 write_csv(all_chch, 'week_5_datasets/all_chch_listings.csv')
 ```
