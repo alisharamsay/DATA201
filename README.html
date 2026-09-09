@@ -359,6 +359,16 @@ display: none;
 snapshots into a single dataset for exploratory analysis.</p>
 <p><strong>Team members:</strong> Alice Kuo, Charlie Harris and Alisha
 Ramsay</p>
+<div id="airbnb-dataset-analysis" class="section level2">
+<h2>Airbnb Dataset Analysis</h2>
+<p>This repository contains Airbnb data that has been renamed and
+transformed for this project.</p>
+<p><strong>Original Source</strong> Inside Airbnb (<a href="https://insideairbnb.com/get-the-data/" class="uri">https://insideairbnb.com/get-the-data/</a>)
+<strong>License</strong> This data is licensed under a <a href="https://creativecommons.org">Creative Commons Attribution 4.0
+International License (CCBY 4.0)</a> <strong>Modifications</strong> The
+original CSV dataset files were downloaded to “Week_5_datasets” folder
+and filenames were changed to fit the project.</p>
+</div>
 <div id="data-dictionary" class="section level2">
 <h2>Data Dictionary</h2>
 <p>Source: Inside Airbnb - New Zealand listings.csv (monthly snapshots,
@@ -383,8 +393,8 @@ currency. minimum_nights (integer): minimum number of night stay for the
 listing number_of_reviews (integer): The number of reviews the listing
 has last_review (date): The date of the last/newest review
 reviews_per_month (numeric): The average number of reviews per month the
-listing has over the lifetime of the listing.</p>
-<p>calculated_host_listings_count (integer): The number of listings the
+listing has over the lifetime of the listing.
+calculated_host_listings_count (integer): The number of listings the
 host has in the current scrape availability_365 (integer): number of
 days listings available in 365 days number_of_reviews_ltm (integer): The
 number of reviews the listing has (in the last 12 months) license
@@ -416,12 +426,7 @@ City at the time of that month’s scrape.</li>
 <li>The combined dataset (all_chch) contains 28796 rows across 9 monthly
 snapshots.</li>
 <li>19 columns, described in the data dictionary above.</li>
-<li>Missing data: license has the most missing values (28,795), as
-registration numbers aren’t required or provided for all listings. price
-is missing for 10,667 rows. last_review and reviews_per_month are each
-missing 2,627 values (listings with no reviews yet). minimum_nights has
-37 missing values, and host_name has 1. All other columns have no
-missing values.</li>
+<li>There are 2,8795 in the data</li>
 <li>No sensitive personal data beyond host first name and
 neighbourhood-level location (not exact address).</li>
 <li>Represents Airbnb hosts and listings in Christchurch City only;
@@ -469,12 +474,13 @@ Inside Airbnb’s guidelines against republishing their data).</li>
 <div id="distribution" class="section level3">
 <h3>Distribution</h3>
 <ul>
-<li>Original source data: <a href="https://insideairbnb.com/get-the-data/" class="uri">https://insideairbnb.com/get-the-data/</a>, licensed under
-CC0. Inside Airbnb states that “Murray Cox has waived all copyright and
-related or neighboring rights to Inside Airbnb Data.”</li>
+<li>Original source data: <a href="https://insideairbnb.com/get-the-data/" class="uri">https://insideairbnb.com/get-the-data/</a>, licensed under a
+Creative Commons Attribution 4.0 International License (<a href="http://creativecommons.org/licenses/by/4.0/" class="uri">http://creativecommons.org/licenses/by/4.0/</a>).</li>
 <li>Inside Airbnb’s community guidelines ask users to “only take the
 data you need,” not to scrape the site directly, and not to republish
-the data, since “this site provides the best context for the data.”</li>
+the data, since “this site provides the best context for the data.”
+Their Data Policies page also states that Inside Airbnb data “should be
+attributed and cited appropriately.”</li>
 <li>The combined, filtered dataset (all_chch_listings.csv) produced by
 this project is stored in this repository’s week_5_datasets folder for
 coursework purposes only, in line with the above guidelines.</li>

@@ -20,7 +20,6 @@ filtered to Christchurch City only and concatenated across all 9 monthly snapsho
 Descriptions below are adapted from Inside Airbnb's official Data Dictionary: 
 https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?usp=sharing
 
-
 id (integer): Airbnb's unique identifier for the listing
 name (string): Name of the listing
 host_id(integer): Airbnb's unique identifier for the host/user
@@ -49,24 +48,20 @@ This dataset was created by Inside Airbnb, a mission-driven activist project
 that provides data quantifying the impact of short-term rentals on housing 
 and residential communities, and supports advocacy for policies to protect 
 cities from these impacts. It is run independently of Airbnb, by Murray Cox, 
-and is not commercially funded - it's sustained through donations.
+and is not commercially funded.
 
 For this project, the New Zealand dataset was downloaded, filtered to 
 Christchurch City, and combined across 9 monthly snapshots (Oct 2025 - 
-June 2026) by Alice, Charlie and Alisha for DATA201, to analyse trends 
-in Christchurch Airbnb listings over time.
+June 2026) for DATA201, to analyse trends in Christchurch Airbnb listings 
+over time.
 
 ### Composition
 - Each row represents a single Airbnb listing active in Christchurch City 
   at the time of that month's scrape.
-- The combined dataset (all_chch) contains 28796 rows across 9 monthly 
+- The combined dataset (all_chch) contains 28795 rows across 9 monthly 
   snapshots.
 - 19 columns, described in the data dictionary above.
-- There are 2,8795 in the data
-- No sensitive personal data beyond host first name and neighbourhood-level 
-  location (not exact address).
-- Represents Airbnb hosts and listings in Christchurch City only; excludes 
-  the rest of New Zealand and any listings removed before each scrape date.
+- Represents Airbnb hosts and listings in Christchurch City only
 
 ### Collection process
 - Inside Airbnb collects the data by scraping Airbnb's public website 
@@ -79,12 +74,9 @@ in Christchurch Airbnb listings over time.
   
 ### Preprocessing, cleaning and labelling
 - Each monthly file was filtered to the "Christchurch City" neighbourhood_group
-- A derived column, month_year, was added to each monthly file to record 
+- A new column, month_year, was added to each monthly file to record 
   which snapshot it came from (e.g. "2025-10").
 - The 9 filtered files were concatenated into all_chch.
-- No values were imputed; missing data was left as NA.
-- No manual labelling was performed - all columns are as provided, aside 
-  from month_year.
 
 ### Uses
 - Intended for this DATA201 coursework project, exploring trends in 

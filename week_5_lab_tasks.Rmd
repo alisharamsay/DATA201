@@ -5,6 +5,8 @@ date: "2026-07-31"
 output: html_document
 ---
 
+## Week 5 lab - Deliverable 3
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -12,13 +14,17 @@ knitr::opts_chunk$set(echo = TRUE)
 Task: Filter on Christchurch data only. Use only this filtered dataset from now on. Using 'june_2026_listings.csv' first
 
 ```{r june_2026_listings}
-
+# loading tidyverse library
 library(tidyverse)
+
+# Read in the June 2026 Airbnb listings dataset
 jun_26 <- read_csv('week_5_datasets/june_2026_listings.csv')
 
+# Checking the first 10 rows of the june data
 print("The first 10 rows are:")
 print(head(jun_26, 10))
 
+# Checking the june summary
 print("Summary of the dataset is:")
 print(summary(jun_26))
 ```
@@ -28,18 +34,21 @@ print(summary(jun_26))
 unique(jun_26$neighbourhood_group)
 ```
 
+Checking process by filtering june before full chch data
+
 ```{r}
+# Checking the filter works just for june
 # Filter out so data only has Christchurch city rows and adding the month+year column
-chch_listings <- jun_26 %>%
-  filter(neighbourhood_group == 'Christchurch City') %>%
-  mutate(month_year = '2026-06')
-head(chch_listings)
+#chch_listings <- jun_26 %>%
+#  filter(neighbourhood_group == 'Christchurch City') %>%
+#  mutate(month_year = '2026-06')
+#head(chch_listings)
 ```
 
-The filtered on Christchurch city data is named: chch_listings
-
 Filtering all the data sets to Christchurch city and adding month + year column using a pipeline
+
 ```{r}
+# Takes a filename and its corresponding month_year label, applies the Christchurch City filter, and adds the month_year column.
 load_chch_listings <- function(filename, month_year) {
   read_csv(paste0('week_5_datasets/', filename)) %>%
     filter(neighbourhood_group == 'Christchurch City') %>%
@@ -47,7 +56,8 @@ load_chch_listings <- function(filename, month_year) {
 }
 ```
 
-Running the pipeline for the data
+Applying the load_chch_listings function to each month's dataset, filtering to Christchurch City and tagging each with its month_year.
+
 ```{r}
 chch_oct25 <- load_chch_listings('october_2025_listings.csv', '2025-10')
 chch_nov25 <- load_chch_listings('november_2025_listings.csv', '2025-11')
@@ -60,8 +70,10 @@ chch_may26 <- load_chch_listings('may_2026_listings.csv', '2026-05')
 chch_jun26 <- load_chch_listings('june_2026_listings.csv', '2026-06')
 ```
 
-combining datasets into full data set for Oct 2025 to June 2026 for Christchurch
+Combining all nine monthly datasets into a single Christchurch dataset spanning October 2025 to June 2026.
+
 ```{r}
+# Row bind all monthly Christchurch datasets into one combined dataset
 all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26, chch_mar26, chch_apr26, chch_may26, chch_jun26)
 
 ```
@@ -69,23 +81,27 @@ all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26
 Combined dataset called: all_chch
 
 Summary stats
+
 ```{r}
-# min + max + mean + std of columns
+# Summary statistics (min, max, mean, sd) for all numeric columns,
 all_chch %>%
   select(-id, -host_id, -latitude, -longitude) %>%
   summarise(across(where(is.numeric),
                     list(min = ~min(.x, na.rm = TRUE),
                          max = ~max(.x, na.rm = TRUE),
                          mean = ~mean(.x, na.rm = TRUE),
-                         sd = ~sd(.x, na.rm = TRUE))))
+                         sd = ~sd(.x, na.rm = TRUE)))) %>%
+pivot_longer(everything(), names_to = c("variable", "stat"), names_sep = "_(?=[^_]+$)") %>%
+pivot_wider(names_from = stat, values_from = value)
 ```
 
 ```{r}
+# Seeing num of rows in data
 nrow(all_chch)
 ```
+
 ```{r}
 # frequency table counting how many times unique category appears in room_type coumn and neighbourhood column
-
 table(all_chch$room_type)
 table(all_chch$neighbourhood)
 ```
@@ -96,29 +112,31 @@ colSums(is.na(all_chch))
 ```
 
 Storing the combined Christchurch dataset named: all_chch_listings.csv
+
 ```{r}
+# Storing data
 write_csv(all_chch, 'week_5_datasets/all_chch_listings.csv')
 ```
 
-
-``` {r all_chch_listings.csv tasks}
+```{r all_chch_listings.csv tasks}
+# Checking first 10 rows of chch data
 chch_file <- read_csv('week_5_datasets/all_chch_listings.csv')
-head(chch_file, 10) # check and read first 10 rows of the chch_file
+head(chch_file, 10)
 ```
-Task Reproduce the workflow and the plots in R 
-Plot the distribution of price as a histogram for christchurch city
 
-(also said to plot for all NZ but data has gotten rid of NZ?)
-(also said special task to plot both in the same plot but..?)
+Task Reproduce the workflow and the plots in R Plot the distribution of price as a histogram for christchurch city
+
+(also said to plot for all NZ but data has gotten rid of NZ?) (also said special task to plot both in the same plot but..?)
 
 ```{r plot distribution of price as a histogram for Christchurch city}
 hist(chch_file$price,
-     main = "Distribution of Price for Christchurch City", 
+     main = "Distribution of Price for Christchurch City (with outliers)", 
      xlab = "Price",
      ylab = "Number of listings",
      col = "blue",
      border = "white")
 ```
+
 ```{r check price vs frequency}
 
 # Check the price vs frequency in each bin in a table form
@@ -133,12 +151,11 @@ table(price_bins)
 
 outliers <- chch_file %>%
   filter(price >20000)
-view(outliers)
+View(outliers)
+# shows 9 outliers
 ```
 
-To check the accommodation priced at $22971/night. Checking its latitude (-43.52059) and longitude(172.6496) showed on google map to be at address 333 Bealey Avenue, chch central. 
-Checked accommodation on google map priced at $43188/night and $43178/night, also appeared unlikely to worth that much.
-These 9 values likely error, to drop these 9 extreme outlier values
+To check the accommodation priced at \$22971/night. Checking its latitude (-43.52059) and longitude(172.6496) showed on google map to be at address 333 Bealey Avenue, chch central. Checked accommodation on google map priced at \$43188/night and \$43178/night, also appeared unlikely to worth that much. These 9 values likely error, to drop these 9 extreme outlier values
 
 ```{r dropping 9 price outliers}
 
@@ -146,13 +163,12 @@ chch_clean <- chch_file %>%
   filter(price <=1500) #filter to only include accommodation with price <=$1500
 
 hist(chch_clean$price,
-     main="Distribution of Price for Christchurch city",
+     main="Distribution of Price for Christchurch city (without outliers)",
      xlab = "Price",
      ylab = "Number of listings",
      col="blue",
      border="white")
 ```
-
 
 Task- Calculate how long ago the last review was in days (difference between scrape/publish date and last review date). Plot the distribution of this new feature.
 
@@ -165,16 +181,18 @@ class(chch_file$last_review)
 # visualise what the dates look like on last_review - first 5 rows
 head(chch_file$last_review)
 ```
+
 ```{r review days}
 
-# Using last publish date on airbnb listings website, which is 19 Jun 2026
+# Using last publish date on airbnb listings website, which is 22 Jun 2026
 
-publish_date <- as.Date("2026-06-19")
+publish_date <- as.Date("2026-06-22")
 chch_file$difference_days <- as.numeric(publish_date - chch_file$last_review) # create a new column "difference_days"
 chch_file$difference_days
 
 head(chch_file) # Check the new column difference_days exists
 ```
+
 ```{r review_days}
 hist(chch_file$difference_days,
      main = "Distribution of Days since Last Review",
@@ -188,18 +206,35 @@ Task - Find out which properties in New Zealand get the highest numbers of revie
 ```{r}
 chch_file$number_of_reviews
 ```
+
+Filtering the data by decreasing
+
 ```{r}
-filtered_data <- sort(chch_file$number_of_reviews, decreasing =TRUE) 
-print(filtered_data)
+# filtering data decreasing so we can get the top 10%
+sorted_data <- chch_file %>% arrange(desc(number_of_reviews))
+#filtered_data <- sort(chch_file$number_of_reviews, decreasing =TRUE) 
+#print(filtered_data)
+# Checking the data is sorted
+head(sorted_data$number_of_reviews, 40)
+
+print(sorted_data)
 ```
+
+Finding the number of rows in the dataset and finding 10% (0.1) of the data
+
 ```{r}
-nrow(chch_file)
-```
-```{r}
-top_prc <- 28795*0.1
+#finding num of rows
+n_total <- nrow(chch_file)
+
+#finding top 10%
+top_prc <- n_total * 0.1
+
+#printing top percentage
 print(top_prc)
 ```
 
+Showing top 10% of the data
+
 ```{r}
-head(filtered_data, n=2880)
+head(filtered_data, n=top_prc)
 ```
