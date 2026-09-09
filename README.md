@@ -134,7 +134,7 @@ Location Id (integer): The geographic area the row describes, coded using
 Statistics NZ's SA2-2019 (Statistical Area 2) boundaries.
 Dwelling Type (string): The property type — one of ALL, Apartment, Boarding 
 House, Flat, House, or Room.
-Number Of Beds (integer): The number of bedrooms in the property.
+Number Of Beds (integer): The number of bedrooms in the property. 0-5+
 Total Bonds (integer): The count of bonds newly lodged in that quarter for 
 the given Location Id/Dwelling Type/Beds combination.
 Active Bonds (integer): The count of bonds that were active (in force) at some
