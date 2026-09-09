@@ -1,0 +1,274 @@
+---
+title: "week_8_lab_tenancy"
+author: "CHAKAR"
+date: "2026-09-08"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+lab instruction: Filter the timeframe to cover the same months as the other dataset
+Clean the bond dataset, too. Similar rules as above apply -- you decide what makes sense, document well, and push the final code to your repository. Please make sure to keep the Location Id and the TimeFrame.
+next week's goal will be to combine both datasets and compare rental prices and number of available properties.
+
+```{r}
+# Check data structures
+library(tidyverse)
+data <- read_csv("week_8_datasets/Detailed-Quarterly-Tenancy-Q1-2020-Q3-2026.csv")
+head(data)
+colnames(data)
+glimpse(data)
+summary(data)
+```
+check how many literal "NULL" text strings exist versus actual missing values (NA/NaN) across the dataset
+```{r}
+#Count if any columns contain the literal text string "NULL"
+print(sapply(data, function(x) sum(as.character(x) == "NULL", na.rm = TRUE)))
+```
+TimeFrame 
+                      0 
+            Location Id 
+                    794 <- has Null strings ?should be numeric
+          Dwelling Type 
+                      0 
+         Number Of Beds 
+                      0 
+            Total Bonds 
+                      0 
+           Active Bonds 
+                      0 
+           Closed Bonds 
+                      0 
+            Median Rent 
+                    803 <- has Null strings
+    Geometric Mean Rent 
+                    803 <- has Null strings
+    Upper Quartile Rent 
+                    803 <- has Null strings
+    Lower Quartile Rent 
+                    803 <- has Null strings
+Log Std Dev Weekly Rent 
+                    859 <- has Null strings
+                    
+
+Check location id: does it contain any other non-numeric text besides "NULL" and "-99"
+```{r}
+# Check for any unique values in Location Id that are not numbers, NA, or "-99"
+data %>%
+  mutate(Location_Id_chr = as.character(`Location Id`)) %>%
+  filter(!is.na(Location_Id_chr), 
+         Location_Id_chr != "NULL", 
+         Location_Id_chr != "-99") %>%
+  filter(suppressWarnings(is.na(as.numeric(Location_Id_chr)))) %>%
+  pull(`Location Id`) %>%
+  unique()
+```
+
+Location Id contains no other non-numeric text besides NA/NULL and -99
+NULL: The government deliberately hid or left out that data because there weren't enough rentals there to protect people's privacy.
+-99: Code the government uses to mean "the total for the whole country of New Zealand combined," not a specific city.
+
+What to do with "NULL" strings and -99 in location ID columns??
+
+Check other columns:
+```{r}
+# Check unique dwelling types to spot formatting inconsistencies
+unique(data$`Dwelling Type`)
+
+# Check unique values in Number of Beds (to see the text/number mix)
+unique(data$`Number Of Beds`)
+
+glimpse(data)
+```
+[1] "TimeFrame"   <- correct format          
+ [2] "Location Id"  <- think later how to deal          
+ [3] "Dwelling Type"  <- correct format        
+ [4] "Number Of Beds"  <- categorical column because has "ALL" and "5+" along with numbers. doesn't need fixing.       
+ [5] "Total Bonds"  <- ok          
+ [6] "Active Bonds" <- ok          
+ [7] "Closed Bonds" <- ok          
+ [8] "Median Rent"<- need turn "Null" strings to NA, and covert to numeric datatype            
+ [9] "Geometric Mean Rent"<- need turn "Null" strings to NA, and covert to numeric datatype    
+[10] "Upper Quartile Rent"<- need turn "Null" strings to NA, and covert to numeric datatype    
+[11] "Lower Quartile Rent"<- need turn "Null" strings to NA, and covert to numeric datatype    
+[12] "Log Std Dev Weekly Rent"<- need turn "Null" strings to NA, and covert to numeric datatype
+
+
+convert all the rent columns (8-12) into proper numeric values (while automatically turning those "NULL" text strings into clean NA missing values) and keeping Location Id untouched
+```{r}
+data_1 <- data %>%
+  # Convert all rent metrics to numeric (automatically turns "NULL" into NA)
+  mutate(
+    `Median Rent` = as.numeric(`Median Rent`),
+    `Geometric Mean Rent` = as.numeric(`Geometric Mean Rent`),
+    `Upper Quartile Rent` = as.numeric(`Upper Quartile Rent`),
+    `Lower Quartile Rent` = as.numeric(`Lower Quartile Rent`),
+    `Log Std Dev Weekly Rent` = as.numeric(`Log Std Dev Weekly Rent`)
+  )
+
+glimpse(data_1)
+```
+```{r}
+summary(data_1)
+```
+Airbnb dataset covers October 2025 to June 2026. Filter tenancy dataset so it uses the exact same timeframe window
+```{r}
+# Filter the tenancy dataset to match the Airbnb window (Oct 2025 - June 2026)
+data_2 <- data_1 %>%
+  filter(TimeFrame >= as.Date("2025-10-01") & TimeFrame <= as.Date("2026-06-30"))
+
+# Quick check of the date range to make sure it worked
+summary(filtered_data$TimeFrame)
+
+glimpse(data_2)
+```
+Summary so far:
+missing data stored as literal string "NULL" rather than NA for: 
+location_id (794 "NULL" values), 
+Median, Geometric Mean, Upper Quartile, Lower Quartile (all has 803 "NULL" values) 
+Log Std Dev Weekly Rent: (859 "NULL" values)
+Convert all rent metrics (Median, Geometric Mean, Upper Quartile, Lower Quartile, Log Std Dev Weekly Rent) to numeric (automatically turns "NULL" into NA)
+
+location_id also has -99 that represents something
+
+left "number of beds" as categorical column because it includes strings "ALL" and "5+" alongside numbers, which may be needed for analysis
+
+Filtered the dataset to october 2025-june 2026 as per airbnb file
+
+```{r}
+colSums(is.na(data_2))
+```
+```{r}
+head(data_2)
+```
+Deal with location_id column, since it's the identifier
+```{r}
+# check if still has "NULL" strings even after filtered the dataset to the asked timeframe
+sum(data_2$`Location Id` == "NULL", na.rm = TRUE)
+```
+turn the "NULL" cells in location_id column into NAs
+```{r}
+data_3 <- data_2 %>%
+  mutate(`Location Id` = na_if(`Location Id`, "NULL"))
+
+# check
+sum(is.na(data_3$'Location Id'))
+```
+The identifer of the dataset (location id) has 94 missing values.. drop? as looks like the "NULL" were there because there were fewer than 5 bonds for that specific combination, so it's hidden so people can't trace who these tenants are.
+And there's no way knowing these ids..
+Decision to drop these 94 rows
+```{r}
+data_4 <- data_3 %>%
+  drop_na(`Location Id`)
+
+# check
+sum(is.na(data_4$'Location Id'))
+```
+```{r}
+summary(data_4)
+```
+```{r}
+# Pivot rent columns into a long format for a clean multi-box plot
+data_4 %>%
+  select(`Median Rent`, `Upper Quartile Rent`, `Lower Quartile Rent`, `Geometric Mean Rent`) %>%
+  pivot_longer(cols = everything(), names_to = "Rent_Type", values_to = "Amount") %>%
+  ggplot(aes(x = Rent_Type, y = Amount, fill = Rent_Type)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  theme_minimal() +
+  labs(title = "Distribution of Rent Metrics across New Zealand",
+       subtitle = "Red points indicate extreme outliers",
+       x = "Rent Metric Type",
+       y = "Weekly Rent ($)") +
+  theme(legend.position = "none")
+```
+```{r}
+ggplot(data_4, aes(x = `Active Bonds`)) +
+  geom_histogram(bins = 50, fill = "steelblue", color = "white") +
+  theme_minimal() +
+  labs(title = "Distribution of Active Bonds",
+       x = "Active Bonds",
+       y = "Frequency")
+
+```
+```{r}
+# check number of beds column
+# See all unique values in the Number Of Beds column
+unique(data_4$`Number Of Beds`)
+```
+```{r}
+colSums(is.na(data_4))
+```
+Active bond has a mean 358.6 vs median 87, Total bond has a mean of 34.59 and median of 9. Because location id -99 are national totals so is causing this...will need to decide about this -99
+Median rent has a max of 3350/week - very high
+min median rent of 90/week
+No negative or 0 rent
+The Number Of Beds column contains a mix of numeric values (0 to 9), text strings like 'ALL' and '5+', and missing values (NA). But currently they are all being treated as a string. -> inconsistent formatting, will need thinking about.. It also has 876 missing values remaining
+                     
+Previous missing values (94) in median rent, geometric mean rent, upper quartile rent, lower quartile rent, log std dev weekly rent disappeared when dropped the location ID "NULL" rows
+
+Rent columns see if extreme prices make sense
+```{r}
+# Look at rows where median rent is exceptionally high (e.g., over $2,000/week)
+extreme_rents <- data_4 %>%
+  filter(`Median Rent` > 2000)
+
+head(extreme_rents)
+```
+```{r}
+data_4 %>%
+  select(`Median Rent`, `Upper Quartile Rent`, `Lower Quartile Rent`, `Geometric Mean Rent`) %>%
+  pivot_longer(cols = everything(), names_to = "Rent_Type", values_to = "Amount") %>%
+  ggplot(aes(x = Rent_Type, y = Amount, fill = Rent_Type)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  theme_minimal() +
+  labs(title = "Distribution of Rent Metrics",
+       x = "Rent Metric Type",
+       y = "Weekly Rent ($)") +
+  theme(legend.position = "none")
+```
+The extreme rents (2880-3575/week) looks plausible: All dwelling, 5+ beds, low counts in active bonds column since there's only few such properties
+
+check duplicates:
+```{r}
+sum(duplicated(data_4))
+```
+```{r}
+# Check which Location IDs appear more than once in the whole dataset
+duplicate_location_ids <- data_4 %>%
+  count(`Location Id`) %>%
+  filter(n > 1)
+
+# View the result
+head(duplicate_location_ids)
+```
+```{r}
+# Check if any exact row combinations are duplicated
+data_4 %>%
+  group_by(TimeFrame, `Location Id`, `Dwelling Type`, `Number Of Beds`) %>%
+  filter(n() > 1)
+```
+```{r}
+glimpse(data_4)
+```
+
+Summary:
+1. Filtered the dataset to October 1, 2025 – June 30, 2026 to match the Airbnb dataset.
+
+2. Converted literal "NULL" values to NA in location_id and the five rent-related columns (Median Rent, Geometric Mean Rent, Upper Quartile Rent, Lower Quartile Rent, and Log Std Dev Weekly Rent. This has turned the rent-related column from character strings to numeric (dbl).
+
+3. Location Id column "NULL" turned NA values (94 rows - represented areas with <5 bonds, and suppressed for privacy) dropped since these location IDs can't be recovered in any way.Doing this also dropped all the NA values in the rent columns (Median Rent, Geometric Mean Rent, Upper Quartile Rent, Lower Quartile Rent, Log Std Dev Weekly Rent)
+Question: location ID still has -99, which looks like represents country-wide total. Keeping this data makes rent right skewed (Active Bonds: mean = 358.6 vs. median = 87
+Total Bonds: mean = 34.59 vs. median = 9), what to do with this?
+
+4. Number Of Beds: contains numeric values (0–9) as well as string "ALL" and "5+" so the column is character/categorical column. Question: leave it as it is?
+
+5. General findings:
+-No dupliates found for both exact combination and primary keys level (TimeFrame, Location Id, Dwelling Type, Number Of Beds)
+-Rent values: No negative or zero rents were found.
+-Rent extremes: Median rent ranged from $90 to $3,350/week. The highest rent values ($2,880–$3,575/week) appear plausible rather than being data-entry errors, as they are associated with 5+ bedroom/all-dwelling properties and low bond counts.
+(didn't drop any column)
+
+
+(Note Cleaned dataset: data_4)
