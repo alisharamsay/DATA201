@@ -112,7 +112,7 @@ location_id also has -99 that represents something
 
 left "number of beds" as categorical column because it includes strings "ALL" and "5+" alongside numbers, which may be needed for analysis
 
-Filtered the dataset to october 2025-june 2026 as per airbnb file
+Filtered the dataset to October 2025-june 2026 as per airbnb file
 
 ```{r}
 colSums(is.na(data_2))
@@ -138,6 +138,29 @@ data_3 <- data_2 %>%
 # check
 sum(is.na(data_3$'Location Id'))
 ```
+
+Check whether the 94 missing Location Id rows are concentrated in one quarter or spread across all three.
+```{r}
+data_3 %>%
+  mutate(missing_loc = is.na(`Location Id`)) %>%
+  group_by(TimeFrame) %>%
+  summarise(missing_rows = sum(missing_loc)) %>%
+  arrange(TimeFrame)
+```
+Each quarter has a similar number of missing rows (29-33), suggesting this is spread out by chance rather than tied to a specific time period.
+
+Checking missing rate
+```{r}
+data_3 %>%
+  mutate(missing_loc = is.na(`Location Id`)) %>%
+  group_by(TimeFrame) %>%
+  summarise(
+    total_rows = n(),
+    missing_rows = sum(missing_loc),
+    pct_missing = round(100 * missing_rows / total_rows, 2)
+  )
+```
+The missing rate is nearly identical across all three quarters (0.34%, 0.36%, 0.34%), confirming the missingness isn't linked to a specific time period.
 
 The identifer of the dataset (location id) has 94 missing values.. drop? as looks like the "NULL" were there because there were fewer than 5 bonds for that specific combination, so it's hidden so people can't trace who these tenants are. And there's no way knowing these ids.. Decision to drop these 94 rows
 
