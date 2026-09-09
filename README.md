@@ -172,3 +172,10 @@ Upper Quartile Rent (numeric): The 75th percentile weekly rent, in NZD, for
 bonds in that group.
 Lower Quartile Rent (numeric): The 25th percentile weekly rent, in NZD, for bonds in that group.
 Log Std Dev Weekly Rent (numeric): The standard deviation of the natural log of weekly rent, a measure of rent dispersion within the group.
+
+## AI Usage Declaration
+Our group used ai during this project. We used primarily for debugging, code review and summarising code. 
+All analytical decisions were made by the team, with AI used to help implement those decisions rather than to make them.
+
+Tools used: Gemini, Claude, 
+
