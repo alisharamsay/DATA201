@@ -1,0 +1,5 @@
+library(tidyverse)
+library(performance)
+library(GGally)
+library(readxl)
+renv::snapshot()

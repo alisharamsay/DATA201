@@ -265,7 +265,7 @@ Total Bonds: mean = 34.59 vs. median = 9), what to do with this?
 4. Number Of Beds: contains numeric values (0–9) as well as string "ALL" and "5+" so the column is character/categorical column. Question: leave it as it is?
 
 5. General findings:
--No dupliates found for both exact combination and primary keys level (TimeFrame, Location Id, Dwelling Type, Number Of Beds)
+-No dupliates found for both exact combination and primary keys level (TimeFrame, Location Id, Dwelling Type, Number Of Beds) 
 -Rent values: No negative or zero rents were found.
 -Rent extremes: Median rent ranged from $90 to $3,350/week. The highest rent values ($2,880–$3,575/week) appear plausible rather than being data-entry errors, as they are associated with 5+ bedroom/all-dwelling properties and low bond counts.
 (didn't drop any column)
