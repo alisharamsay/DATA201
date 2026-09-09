@@ -116,4 +116,43 @@ in Christchurch Airbnb listings over time.
   updated beyond the June 2026 snapshot.
   
   
+### Rental bond data set analysis
+-Updated quarterly (last update 17/8/26)
 
+-The files above are for private bonds, starting from January 1993. 
+'Private' means private sector landlords. 
+
+-This data comes from our tenancy bond database, which records all new 
+rental bonds that are lodged with us each month.
+
+-It is listed by tenancy start date and uses the SA2-2019 area definitions
+from Statistics NZ. Privacy protection measures have been applied; fixed
+random rounding is applied to base 3 and there is a suppression of results
+when there are fewer than 5 bonds for any given selection.
+
+## Data Dictionary
+
+-source: tenancy.gov 
+(https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental
+-bond-data/)
+
+TimeFrame (date): The quarter the data covers, given as the first day of the 
+quarter (e.g. 2026-04-01 = Q2 2026).
+Location Id (integer): The geographic area the row describes, coded using
+Statistics NZ's SA2-2019 (Statistical Area 2) boundaries.
+Dwelling Type (string): The property type — one of ALL, Apartment, Boarding 
+House, Flat, House, or Room.
+Number Of Beds (integer): The number of bedrooms in the property.
+Total Bonds (integer): The count of bonds newly lodged in that quarter for 
+the given Location Id/Dwelling Type/Beds combination.
+Active Bonds (integer): The count of bonds that were active (in force) at some
+point during the quarter.
+Closed Bonds (integer): The count of bonds that were closed (tenancy ended) 
+during the quarter.
+Median Rent (numeric): The median weekly rent, in NZD, for bonds in that group.
+Geometric Mean Rent (numeric): The geometric mean of weekly rent, in NZD, for 
+bonds in that group.
+Upper Quartile Rent (numeric): The 75th percentile weekly rent, in NZD, for 
+bonds in that group.
+Lower Quartile Rent (numeric): The 25th percentile weekly rent, in NZD, for bonds in that group.
+Log Std Dev Weekly Rent (numeric): The standard deviation of the natural log of weekly rent, a measure of rent dispersion within the group.
