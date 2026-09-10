@@ -272,9 +272,7 @@ Summary: 1. Filtered the dataset to October 1, 2025 – June 30, 2026 to match t
 2.  Converted literal "NULL" values to NA in location_id and the five rent-related columns (Median Rent, Geometric Mean Rent, Upper Quartile Rent, Lower Quartile Rent, and Log Std Dev Weekly Rent. This has turned the rent-related column from character strings to numeric (dbl).
 
 3.  Location ID: Converted "NULL" values to NA. There were 94 "NULL" rows. "NULL" is used when there are fewer than five bonds for a given selection, in order to suppress results and protect privacy. These 94 rows were dropped because the corresponding location IDs cannot be recovered.
-
 Removing these rows also removed all NA values in the rent-related columns (Median Rent, Geometric Mean Rent, Upper Quartile Rent, Lower Quartile Rent, and Log Std Dev Weekly Rent).
-
 Question: 
 location ID still has -99, which appears to represent country-wide total. Keeping this data makes rent right skewed (Active Bonds: mean = 358.6 vs. median = 87 Total Bonds: mean = 34.59 vs. median = 9), what to do with this?
 
