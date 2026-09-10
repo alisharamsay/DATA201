@@ -78,8 +78,6 @@ all_chch <- bind_rows(chch_oct25, chch_nov25, chch_dec25, chch_jan26, chch_feb26
 
 ```
 
-Combined dataset called: all_chch
-
 Summary stats
 
 ```{r}

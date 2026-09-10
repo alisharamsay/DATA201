@@ -76,7 +76,7 @@ price has 10,667 missing values: how to handle? or filter them out?
 
 last_review and reviews_per_month both have 2,627 missing values
 
-days_since_review has 9418 negative values. Days since last reivew histogram: Most reviews happened very recently (clumped near 0 days), which makes sense for active listings, but there are long-tail stale listings stretching out past 1,000+ days.
+days_since_review has 9418 negative values. Days since last review histogram: Most reviews happened very recently (clumped near 0 days), which makes sense for active listings, but there are long-tail stale listings stretching out past 1,000+ days.
 For month_year column, change values to include the day the scrape date was done (from the website).
 ```{r}
 data_1 <- data %>%
@@ -236,7 +236,7 @@ print(price_summary)
 What to do with remaining PRICE NAs? - leave them as NAs for now as not sure what is happening downward
 
 License 100% NAs - no universal registration rules so hosts didn't have to register for official registration code to list their property
--> DECISION DROP icense column
+-> DECISION DROP license column
 ```{r}
 # Drop the useless license column
 df_cleaned <- data_3 %>%

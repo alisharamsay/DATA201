@@ -21,23 +21,45 @@ Descriptions below are adapted from Inside Airbnb's official Data Dictionary:
 https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?usp=sharing
 
 id (integer): Airbnb's unique identifier for the listing
+
 name (string): Name of the listing
+
 host_id(integer): Airbnb's unique identifier for the host/user
+
 host_name (string): Name of the host. Usually just the first name(s).
+
 neighbourhood_group (string): The city/district the listing belongs to (filtered to "Christchurch City" only in this dataset)
+
 neighbourhood (string): The neighbourhood as geocoded using the latitude and longitude against neighborhoods as defined by open or public digital shapefiles.
+
 latitude (numeric):	Uses the World Geodetic System (WGS84) projection for latitude and longitude.
+
 longitude (numeric): Uses the World Geodetic System (WGS84) projection for latitude and longitude.
+
 room_type (string): Has 3 room types - entire place, private or shared
+
 price (numeric): daily price in local currency.
+
 minimum_nights (integer): minimum number of night stay for the listing 
+
 number_of_reviews (integer): The number of reviews the listing has
+
 last_review (date): The date of the last/newest review
-reviews_per_month (numeric): The average number of reviews per month the listing has over the lifetime of the listing.
+
+reviews_per_month (numeric): The average number of reviews per month the listing has over the lifetime of the listing. 
+
+Uses the equation: IF scrape_date - first_review <= 30 THEN number_of_reviews
+                   ELSE number_of_reviews / ((scrape_date - first_review + 1) / (365/12))
+This means the value is undefined when a listing has no reviews, since the formula requires first_review. These NAs were recoded to 0, confirmed to always align with a missing last_review
+
 calculated_host_listings_count (integer): The number of listings the host has in the current scrape
+
 availability_365 (integer): number of days listings available in 365 days
+
 number_of_reviews_ltm (integer): The number of reviews the listing has (in the last 12 months) 
+
 license (string): The listing's license/registration number, where required and provided. Often missing.
+
 month_year (string): Added during processing (not part of the original Inside Airbnb data) - indicates which monthly snapshot the row came from, e.g. "2025-10"
 
 
@@ -71,6 +93,9 @@ over time.
   23 May 2026, 19 June 2026.
 - No direct consent was obtained from hosts, as the data reflects publicly 
   listed information already visible on Airbnb's site.
+- Airbnb anonymizes listing locations by randomizing coordinates by 0-150 
+  metres from the actual address. Listings in the same building may therefore 
+  appear scattered on a map.
   
 ### Preprocessing, cleaning and labelling
 - Each monthly file was filtered to the "Christchurch City" neighbourhood_group
@@ -125,8 +150,7 @@ when there are fewer than 5 bonds for any given selection.
 ## Data Dictionary
 
 -source: tenancy.gov 
-(https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental
--bond-data/)
+https://www.tenancy.govt.nz/about-tenancy-services/data-and-statistics/rental-bond-data/
 
 TimeFrame (date): The quarter the data covers, given as the first day of the 
 quarter (e.g. 2026-04-01 = Q2 2026).
@@ -148,3 +172,10 @@ Upper Quartile Rent (numeric): The 75th percentile weekly rent, in NZD, for
 bonds in that group.
 Lower Quartile Rent (numeric): The 25th percentile weekly rent, in NZD, for bonds in that group.
 Log Std Dev Weekly Rent (numeric): The standard deviation of the natural log of weekly rent, a measure of rent dispersion within the group.
+
+## AI Usage Declaration
+Our group used ai during this project. We used primarily for debugging, code review and summarising code. 
+All analytical decisions were made by the team, with AI used to help implement those decisions rather than to make them.
+
+Tools used: Gemini, Claude, 
+
